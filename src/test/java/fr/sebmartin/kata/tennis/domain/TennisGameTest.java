@@ -78,4 +78,75 @@ public class TennisGameTest {
 
         game.mark(Player.PLAYER_ONE);
     }
+
+    @Test
+    public void ifTheTwoPlayersReachTheScoreOfFortyTheDeuceRuleIsActivated() throws GameOverException {
+
+        TennisGame game = new TennisGame();
+        game.mark(Player.PLAYER_ONE);
+        game.mark(Player.PLAYER_ONE);
+        game.mark(Player.PLAYER_ONE);
+        game.mark(Player.PLAYER_TWO);
+        game.mark(Player.PLAYER_TWO);
+        game.mark(Player.PLAYER_TWO);
+
+        assertEquals(GameScore.DEUCE, game.scores().get(Player.PLAYER_ONE));
+        assertEquals(GameScore.DEUCE, game.scores().get(Player.PLAYER_TWO));
+    }
+
+    @Test
+    public void ifTheScoreisDeuceThePlayerWhoWinThePointTakeTheAdvantage() throws GameOverException {
+
+        TennisGame game = new TennisGame();
+        game.mark(Player.PLAYER_ONE);
+        game.mark(Player.PLAYER_ONE);
+        game.mark(Player.PLAYER_ONE);
+        game.mark(Player.PLAYER_TWO);
+        game.mark(Player.PLAYER_TWO);
+        game.mark(Player.PLAYER_TWO);
+
+        game.mark(Player.PLAYER_ONE);
+
+        assertEquals(GameScore.ADVANTAGE, game.scores().get(Player.PLAYER_ONE));
+        assertEquals(GameScore.FORTY, game.scores().get(Player.PLAYER_TWO));
+    }
+
+    @Test
+    public void ifThePlayerWhoHasTheAdvantageWinThePointHeWinTheGame() throws GameOverException {
+
+        TennisGame game = new TennisGame();
+        game.mark(Player.PLAYER_ONE);
+        game.mark(Player.PLAYER_ONE);
+        game.mark(Player.PLAYER_ONE);
+        game.mark(Player.PLAYER_TWO);
+        game.mark(Player.PLAYER_TWO);
+        game.mark(Player.PLAYER_TWO);
+        game.mark(Player.PLAYER_ONE);
+
+        game.mark(Player.PLAYER_ONE);
+
+        assertEquals(GameScore.LOVE, game.scores().get(Player.PLAYER_ONE));
+        assertEquals(GameScore.LOVE, game.scores().get(Player.PLAYER_TWO));
+        assertTrue(game.winner().isPresent());
+        assertEquals(Player.PLAYER_ONE, game.winner().get());
+    }
+
+    @Test
+    public void ifThePlayerWhoHasTheAdvantageLoosesThePointTheScoreIsDeuce() throws GameOverException {
+
+        TennisGame game = new TennisGame();
+        game.mark(Player.PLAYER_ONE);
+        game.mark(Player.PLAYER_ONE);
+        game.mark(Player.PLAYER_ONE);
+        game.mark(Player.PLAYER_TWO);
+        game.mark(Player.PLAYER_TWO);
+        game.mark(Player.PLAYER_TWO);
+        game.mark(Player.PLAYER_ONE);
+
+        game.mark(Player.PLAYER_TWO);
+
+        assertEquals(GameScore.DEUCE, game.scores().get(Player.PLAYER_ONE));
+        assertEquals(GameScore.DEUCE, game.scores().get(Player.PLAYER_TWO));
+        assertFalse(game.winner().isPresent());
+    }
 }

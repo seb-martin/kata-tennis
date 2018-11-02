@@ -28,6 +28,7 @@ public class TennisGame {
             throw new GameOverException();
         }
 
+
         GameScore lastScore = scores.get(player);
 
         switch (lastScore) {
@@ -38,11 +39,35 @@ public class TennisGame {
                 scores.put(player, GameScore.THIRTY);
                 break;
             case THIRTY:
-                scores.put(player, GameScore.FORTY);
+
+                boolean competingScoreIsForty = scores.get(player.competing()).equals(GameScore.FORTY);
+
+                if (competingScoreIsForty) {
+                    Arrays.stream(Player.values()).forEach(p -> scores.put(p, GameScore.DEUCE));
+                } else {
+                    scores.put(player, GameScore.FORTY);
+                }
+
                 break;
             case FORTY:
+                boolean competingScoreIsAdvantage = scores.get(player.competing()).equals(GameScore.ADVANTAGE);
+
+                if (competingScoreIsAdvantage) {
+                    Arrays.stream(Player.values()).forEach(p -> scores.put(p, GameScore.DEUCE));
+                } else {
+                    Arrays.stream(Player.values()).forEach(p -> scores.put(p, GameScore.LOVE));
+                    winner = player;
+                }
+
+                break;
+            case DEUCE:
+                scores.put(player, GameScore.ADVANTAGE);
+                scores.put(player.competing(), GameScore.FORTY);
+                break;
+            case ADVANTAGE:
                 Arrays.stream(Player.values()).forEach(p -> scores.put(p, GameScore.LOVE));
                 winner = player;
+                break;
         }
 
     }

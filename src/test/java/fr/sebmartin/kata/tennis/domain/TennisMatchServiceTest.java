@@ -15,7 +15,7 @@ public class TennisMatchServiceTest {
     }
 
     @Test
-    public void sprint1_us1() throws GameOverException {
+    public void sprint1() throws GameOverException {
 
         // Start the game: 0 - 0
         assertEquals(GameScore.LOVE, matchService.game().scores().get(Player.PLAYER_ONE));
@@ -52,19 +52,36 @@ public class TennisMatchServiceTest {
         assertEquals(GameScore.THIRTY, matchService.game().scores().get(Player.PLAYER_TWO));
         assertFalse(matchService.game().winner().isPresent());
 
-        // Player 2 wins 1 point : 40 - 40
+        // Player 2 wins 1 point : Deuce - Deuce
+        matchService.mark(Player.PLAYER_TWO);
+        assertEquals(GameScore.DEUCE, matchService.game().scores().get(Player.PLAYER_ONE));
+        assertEquals(GameScore.DEUCE, matchService.game().scores().get(Player.PLAYER_TWO));
+        assertFalse(matchService.game().winner().isPresent());
+
+        // Player 2 wins 1 point : 40 - Advantage
         matchService.mark(Player.PLAYER_TWO);
         assertEquals(GameScore.FORTY, matchService.game().scores().get(Player.PLAYER_ONE));
+        assertEquals(GameScore.ADVANTAGE, matchService.game().scores().get(Player.PLAYER_TWO));
+        assertFalse(matchService.game().winner().isPresent());
+
+        // Player 1 wins 1 point : Deuce - Deuce
+        matchService.mark(Player.PLAYER_ONE);
+        assertEquals(GameScore.DEUCE, matchService.game().scores().get(Player.PLAYER_ONE));
+        assertEquals(GameScore.DEUCE, matchService.game().scores().get(Player.PLAYER_TWO));
+        assertFalse(matchService.game().winner().isPresent());
+
+        // Player 1 wins 1 point : Advantage - 40
+        matchService.mark(Player.PLAYER_ONE);
+        assertEquals(GameScore.ADVANTAGE, matchService.game().scores().get(Player.PLAYER_ONE));
         assertEquals(GameScore.FORTY, matchService.game().scores().get(Player.PLAYER_TWO));
         assertFalse(matchService.game().winner().isPresent());
 
-        // Player 2 wins 1 point : 0 - 0 ; Player 2 win the game
-        matchService.mark(Player.PLAYER_TWO);
+        // Player 1 wins 1 point : 0 - 0 ; Player 1 win the game
+        matchService.mark(Player.PLAYER_ONE);
         assertEquals(GameScore.LOVE, matchService.game().scores().get(Player.PLAYER_ONE));
         assertEquals(GameScore.LOVE, matchService.game().scores().get(Player.PLAYER_TWO));
         assertTrue(matchService.game().winner().isPresent());
-        assertEquals(Player.PLAYER_TWO, matchService.game().winner().get());
-
+        assertEquals(Player.PLAYER_ONE, matchService.game().winner().get());
 
     }
 }
