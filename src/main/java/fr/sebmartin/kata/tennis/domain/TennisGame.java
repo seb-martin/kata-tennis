@@ -1,9 +1,6 @@
 package fr.sebmartin.kata.tennis.domain;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class TennisGame {
 
@@ -14,8 +11,13 @@ public class TennisGame {
         Arrays.stream(Player.values()).forEach(p -> scores.put(p, GameScore.LOVE));
     }
 
+    TennisGame(Map<Player, GameScore> scores, Player winner) {
+        this.scores = Objects.requireNonNull(scores);
+        this.winner = winner;
+    }
+
     public Map<Player, GameScore> scores() {
-        return this.scores;
+        return Collections.unmodifiableMap(this.scores);
     }
 
     public Optional<Player> winner() {
@@ -24,51 +26,80 @@ public class TennisGame {
 
     void mark(Player player) throws GameOverException {
 
-        if (winner().isPresent()) {
-            throw new GameOverException();
-        }
+        checkGameNotOver();
 
+        computeScoresAndWinnerStates(player);
 
+    }
+
+    private void computeScoresAndWinnerStates(Player player) {
         GameScore lastScore = scores.get(player);
 
         switch (lastScore) {
             case LOVE:
-                scores.put(player, GameScore.FIFTEEN);
+                playerScore(player, GameScore.FIFTEEN);
                 break;
             case FIFTEEN:
-                scores.put(player, GameScore.THIRTY);
+                playerScore(player, GameScore.THIRTY);
                 break;
             case THIRTY:
-
-                boolean competingScoreIsForty = scores.get(player.competing()).equals(GameScore.FORTY);
-
-                if (competingScoreIsForty) {
-                    Arrays.stream(Player.values()).forEach(p -> scores.put(p, GameScore.DEUCE));
+                if (testCompetingScoreIsForty(player)) {
+                    deuce();
                 } else {
-                    scores.put(player, GameScore.FORTY);
+                    playerScore(player, GameScore.FORTY);
                 }
 
                 break;
             case FORTY:
-                boolean competingScoreIsAdvantage = scores.get(player.competing()).equals(GameScore.ADVANTAGE);
-
-                if (competingScoreIsAdvantage) {
-                    Arrays.stream(Player.values()).forEach(p -> scores.put(p, GameScore.DEUCE));
+                if (testCompetingScoreIsAdvantage(player)) {
+                    deuce();
                 } else {
-                    Arrays.stream(Player.values()).forEach(p -> scores.put(p, GameScore.LOVE));
-                    winner = player;
+                    playerWin(player);
                 }
 
                 break;
             case DEUCE:
-                scores.put(player, GameScore.ADVANTAGE);
-                scores.put(player.competing(), GameScore.FORTY);
+                playerAdvantage(player);
                 break;
             case ADVANTAGE:
-                Arrays.stream(Player.values()).forEach(p -> scores.put(p, GameScore.LOVE));
-                winner = player;
+                playerWin(player);
                 break;
         }
+    }
 
+    private boolean testCompetingScoreIsForty(Player player) {
+        return testCompetingScore(player, GameScore.FORTY);
+    }
+
+    private boolean testCompetingScoreIsAdvantage(Player player) {
+        return testCompetingScore(player, GameScore.ADVANTAGE);
+    }
+
+    private boolean testCompetingScore(Player player, GameScore advantage) {
+        return scores.get(player.competing()).equals(advantage);
+    }
+
+    private void deuce() {
+        Arrays.stream(Player.values()).forEach(p -> playerScore(p, GameScore.DEUCE));
+    }
+
+    private void playerAdvantage(Player player) {
+        playerScore(player, GameScore.ADVANTAGE);
+        playerScore(player.competing(), GameScore.FORTY);
+    }
+
+    private void playerWin(Player player) {
+        Arrays.stream(Player.values()).forEach(p -> playerScore(p, GameScore.LOVE));
+        winner = player;
+    }
+
+    private void playerScore(Player player, GameScore forty) {
+        scores.put(player, forty);
+    }
+
+    private void checkGameNotOver() throws GameOverException {
+        if (winner().isPresent()) {
+            throw new GameOverException();
+        }
     }
 }
