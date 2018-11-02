@@ -2,13 +2,11 @@ package fr.sebmartin.kata.tennis.domain;
 
 import org.junit.Test;
 
-import java.util.EnumMap;
-import java.util.Map;
-
+import static fr.sebmartin.kata.tennis.domain.AssertUtil.*;
 import static fr.sebmartin.kata.tennis.domain.GameScore.*;
 import static fr.sebmartin.kata.tennis.domain.Player.PLAYER_ONE;
 import static fr.sebmartin.kata.tennis.domain.Player.PLAYER_TWO;
-import static org.junit.Assert.*;
+import static fr.sebmartin.kata.tennis.domain.TennisFactory.buildGame;
 
 public class TennisGameTest {
 
@@ -17,7 +15,7 @@ public class TennisGameTest {
 
         TennisGame game = new TennisGame();
 
-        assertScores(game, LOVE, LOVE);
+        assertGameScores(game, LOVE, LOVE);
         assertGameNotWon(game);
     }
 
@@ -28,7 +26,7 @@ public class TennisGameTest {
 
         game.mark(PLAYER_ONE);
 
-        assertScores(game, FIFTEEN, LOVE);
+        assertGameScores(game, FIFTEEN, LOVE);
         assertGameNotWon(game);
     }
 
@@ -39,7 +37,7 @@ public class TennisGameTest {
 
         game.mark(PLAYER_ONE);
 
-        assertScores(game, THIRTY, LOVE);
+        assertGameScores(game, THIRTY, LOVE);
         assertGameNotWon(game);
     }
 
@@ -50,7 +48,7 @@ public class TennisGameTest {
 
         game.mark(PLAYER_ONE);
 
-        assertScores(game, FORTY, LOVE);
+        assertGameScores(game, FORTY, LOVE);
         assertGameNotWon(game);
     }
 
@@ -61,7 +59,7 @@ public class TennisGameTest {
 
         game.mark(PLAYER_ONE);
 
-        assertScores(game, LOVE, LOVE);
+        assertGameScores(game, LOVE, LOVE);
         assertGameWon(game, PLAYER_ONE);
     }
 
@@ -80,7 +78,7 @@ public class TennisGameTest {
 
         game.mark(PLAYER_TWO);
 
-        assertScores(game, DEUCE, DEUCE);
+        assertGameScores(game, DEUCE, DEUCE);
         assertGameNotWon(game);
     }
 
@@ -91,7 +89,7 @@ public class TennisGameTest {
 
         game.mark(PLAYER_ONE);
 
-        assertScores(game, ADVANTAGE, FORTY);
+        assertGameScores(game, ADVANTAGE, FORTY);
         assertGameNotWon(game);
     }
 
@@ -102,7 +100,7 @@ public class TennisGameTest {
 
         game.mark(PLAYER_ONE);
 
-        assertScores(game, LOVE, LOVE);
+        assertGameScores(game, LOVE, LOVE);
         assertGameWon(game, PLAYER_ONE);
     }
 
@@ -113,32 +111,8 @@ public class TennisGameTest {
 
         game.mark(PLAYER_TWO);
 
-        assertScores(game, DEUCE, DEUCE);
+        assertGameScores(game, DEUCE, DEUCE);
         assertGameNotWon(game);
     }
 
-    private void assertScores(TennisGame game, GameScore player1Score, GameScore player2Score) {
-        assertEquals(player1Score, game.scores().get(PLAYER_ONE));
-        assertEquals(player2Score, game.scores().get(PLAYER_TWO));
-    }
-
-    private void assertGameNotWon(TennisGame game) {
-        assertFalse(game.winner().isPresent());
-    }
-
-    private void assertGameWon(TennisGame game, Player winner) {
-        assertTrue(game.winner().isPresent());
-        assertEquals(winner, game.winner().get());
-    }
-
-    private TennisGame buildGame(GameScore playerOneScore, GameScore playerTwoScore, Player winner) {
-        return new TennisGame(buildScores(playerOneScore, playerTwoScore), winner);
-    }
-
-    private Map<Player, GameScore> buildScores(GameScore playerOneScore, GameScore playerTwoScore) {
-        Map<Player, GameScore> scores = new EnumMap<>(Player.class);
-        scores.put(PLAYER_ONE, playerOneScore);
-        scores.put(PLAYER_TWO, playerTwoScore);
-        return scores;
-    }
 }

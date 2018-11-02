@@ -43,7 +43,7 @@ public class TennisGame {
                 playerScore(player, GameScore.THIRTY);
                 break;
             case THIRTY:
-                if (testCompetingScoreIsForty(player)) {
+                if (testOponentScoreIsForty(player)) {
                     deuce();
                 } else {
                     playerScore(player, GameScore.FORTY);
@@ -51,7 +51,7 @@ public class TennisGame {
 
                 break;
             case FORTY:
-                if (testCompetingScoreIsAdvantage(player)) {
+                if (testOponentScoreIsAdvantage(player)) {
                     deuce();
                 } else {
                     playerWin(player);
@@ -67,16 +67,16 @@ public class TennisGame {
         }
     }
 
-    private boolean testCompetingScoreIsForty(Player player) {
+    private boolean testOponentScoreIsForty(Player player) {
         return testCompetingScore(player, GameScore.FORTY);
     }
 
-    private boolean testCompetingScoreIsAdvantage(Player player) {
+    private boolean testOponentScoreIsAdvantage(Player player) {
         return testCompetingScore(player, GameScore.ADVANTAGE);
     }
 
     private boolean testCompetingScore(Player player, GameScore advantage) {
-        return scores.get(player.competing()).equals(advantage);
+        return scores.get(player.opponent()).equals(advantage);
     }
 
     private void deuce() {
@@ -85,7 +85,7 @@ public class TennisGame {
 
     private void playerAdvantage(Player player) {
         playerScore(player, GameScore.ADVANTAGE);
-        playerScore(player.competing(), GameScore.FORTY);
+        playerScore(player.opponent(), GameScore.FORTY);
     }
 
     private void playerWin(Player player) {

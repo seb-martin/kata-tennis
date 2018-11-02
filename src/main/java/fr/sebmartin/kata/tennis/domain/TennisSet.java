@@ -6,6 +6,7 @@ public class TennisSet {
 
     private Map<Player, Integer> scores = new EnumMap<>(Player.class);
     private TennisGame currentGame;
+    private TieBreak tieBreak;
     private Player winner;
 
     TennisSet() {
@@ -13,9 +14,10 @@ public class TennisSet {
         currentGame = new TennisGame();
     }
 
-    TennisSet(Map<Player, Integer> scores, TennisGame currentGame, Player winner) {
+    TennisSet(Map<Player, Integer> scores, TennisGame currentGame, TieBreak tieBreak, Player winner) {
         this.scores = scores;
         this.currentGame = currentGame;
+        this.tieBreak = tieBreak;
         this.winner = winner;
     }
 
@@ -31,15 +33,33 @@ public class TennisSet {
         return currentGame;
     }
 
-    void mark(Player player) throws GameOverException {
+    public Optional<TieBreak> tieBreak() {
+        return Optional.ofNullable(tieBreak);
+    }
+
+    void mark(Player marker) throws GameOverException {
 
         checkSetNotOver();
 
-        markGame(player);
+        if (tieBreak().isPresent()) {
 
-        computeScoresState(player);
+            markTieBreak(marker);
 
-        computeWinnerState(player);
+            computeScoresStateWhenPlayerMarkTieBreak(marker);
+
+            computeWinnerStateWhenPlayerMarkTieBreak();
+
+        } else {
+
+            markGame(marker);
+
+            computeScoresStateWhenPlayerMarkGame(marker);
+
+            computeTieBreakState(marker);
+
+            computeWinnerStateWhenPlayerMarkGame(marker);
+        }
+
     }
 
     private void checkSetNotOver() throws GameOverException {
@@ -48,23 +68,45 @@ public class TennisSet {
         }
     }
 
-    private void markGame(Player player) throws GameOverException {
+    private void markGame(Player marker) throws GameOverException {
         if (currentGame.winner().isPresent()) {
             currentGame = new TennisGame();
         }
 
-        currentGame.mark(player);
+        currentGame.mark(marker);
     }
 
-    private void computeScoresState(Player player) {
+    private void markTieBreak(Player marker) throws GameOverException {
+        tieBreak.mark(marker);
+    }
+
+    private void computeScoresStateWhenPlayerMarkGame(Player marker) {
         if (currentGame.winner().isPresent()) {
-            scores.put(player, scores.get(player) + 1);
+            scores.put(marker, scores.get(marker) + 1);
         }
     }
 
-    private void computeWinnerState(Player player) {
+    private void computeScoresStateWhenPlayerMarkTieBreak(Player marker) {
+        if (tieBreak.winner().isPresent()) {
+            scores.put(marker, scores.get(marker) + 1);
+        }
+    }
+
+    private void computeTieBreakState(Player player) {
+        if (testPlayerReach6AndOtherPlayerHas6(player)) {
+            tieBreak = new TieBreak();
+        }
+    }
+
+    private void computeWinnerStateWhenPlayerMarkGame(Player player) {
         if (testPlayerReach6AndOtherPlayerHas4OrLower(player) || testPlayerReach7(player)) {
             winner = player;
+        }
+    }
+
+    private void computeWinnerStateWhenPlayerMarkTieBreak() {
+        if (tieBreak.winner().isPresent()) {
+            winner = tieBreak.winner().get();
         }
     }
 
@@ -73,7 +115,11 @@ public class TennisSet {
     }
 
     private boolean testPlayerReach6AndOtherPlayerHas4OrLower(Player player) {
-        return scores.get(player) == 6 && scores.get(player.competing()) <= 4;
+        return scores.get(player) == 6 && scores.get(player.opponent()) <= 4;
+    }
+
+    private boolean testPlayerReach6AndOtherPlayerHas6(Player player) {
+        return scores.get(player) == 6 && scores.get(player.opponent()) == 6;
     }
 
 }
