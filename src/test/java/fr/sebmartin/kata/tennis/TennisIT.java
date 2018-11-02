@@ -2,7 +2,8 @@ package fr.sebmartin.kata.tennis;
 
 import fr.sebmartin.kata.tennis.domain.GameOverException;
 import fr.sebmartin.kata.tennis.domain.Player;
-import fr.sebmartin.kata.tennis.domain.TennisMatch;
+import fr.sebmartin.kata.tennis.presentation.ConsoleDisplay;
+import fr.sebmartin.kata.tennis.service.TennisService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,156 +14,156 @@ import static fr.sebmartin.kata.tennis.domain.Player.PLAYER_TWO;
 
 public class TennisIT {
 
-    private TennisMatch match;
+    private TennisService tennisService;
 
     @Before
     public void setUp() {
-        match = new TennisMatch();
+        tennisService = new TennisService(new ConsoleDisplay());
     }
 
     @Test
     public void sprint1() throws GameOverException {
 
         // Start the game: 0 - 0
-        assertGameScores(match, LOVE, LOVE);
-        assertGameNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertGameNotWon(tennisService.match());
 
         // Player 1 wins 1 point : 15 - 0
-        match.mark(PLAYER_ONE);
-        assertGameScores(match, FIFTEEN, LOVE);
-        assertGameNotWon(match);
+        tennisService.mark(PLAYER_ONE);
+        assertGameScores(tennisService.match(), FIFTEEN, LOVE);
+        assertGameNotWon(tennisService.match());
 
         // Player 1 wins 1 point : 30 - 0
-        match.mark(PLAYER_ONE);
-        assertGameScores(match, THIRTY, LOVE);
-        assertGameNotWon(match);
+        tennisService.mark(PLAYER_ONE);
+        assertGameScores(tennisService.match(), THIRTY, LOVE);
+        assertGameNotWon(tennisService.match());
 
         // Player 2 wins 1 point : 30 - 15
-        match.mark(PLAYER_TWO);
-        assertGameScores(match, THIRTY, FIFTEEN);
-        assertGameNotWon(match);
+        tennisService.mark(PLAYER_TWO);
+        assertGameScores(tennisService.match(), THIRTY, FIFTEEN);
+        assertGameNotWon(tennisService.match());
 
         // Player 1 wins 1 point : 40 - 15
-        match.mark(PLAYER_ONE);
-        assertGameScores(match, FORTY, FIFTEEN);
-        assertGameNotWon(match);
+        tennisService.mark(PLAYER_ONE);
+        assertGameScores(tennisService.match(), FORTY, FIFTEEN);
+        assertGameNotWon(tennisService.match());
 
         // Player 2 wins 1 point : 40 - 30
-        match.mark(PLAYER_TWO);
-        assertGameScores(match, FORTY, THIRTY);
-        assertGameNotWon(match);
+        tennisService.mark(PLAYER_TWO);
+        assertGameScores(tennisService.match(), FORTY, THIRTY);
+        assertGameNotWon(tennisService.match());
 
         // Player 2 wins 1 point : Deuce - Deuce
-        match.mark(PLAYER_TWO);
-        assertGameScores(match, DEUCE, DEUCE);
-        assertGameNotWon(match);
+        tennisService.mark(PLAYER_TWO);
+        assertGameScores(tennisService.match(), DEUCE, DEUCE);
+        assertGameNotWon(tennisService.match());
 
         // Player 2 wins 1 point : 40 - Advantage
-        match.mark(PLAYER_TWO);
-        assertGameScores(match, FORTY, ADVANTAGE);
-        assertGameNotWon(match);
+        tennisService.mark(PLAYER_TWO);
+        assertGameScores(tennisService.match(), FORTY, ADVANTAGE);
+        assertGameNotWon(tennisService.match());
 
         // Player 1 wins 1 point : Deuce - Deuce
-        match.mark(PLAYER_ONE);
-        assertGameScores(match, DEUCE, DEUCE);
-        assertGameNotWon(match);
+        tennisService.mark(PLAYER_ONE);
+        assertGameScores(tennisService.match(), DEUCE, DEUCE);
+        assertGameNotWon(tennisService.match());
 
         // Player 1 wins 1 point : Advantage - 40
-        match.mark(PLAYER_ONE);
-        assertGameScores(match, ADVANTAGE, FORTY);
-        assertGameNotWon(match);
+        tennisService.mark(PLAYER_ONE);
+        assertGameScores(tennisService.match(), ADVANTAGE, FORTY);
+        assertGameNotWon(tennisService.match());
 
         // Player 1 wins 1 point : 0 - 0 ; Player 1 win the game
-        match.mark(PLAYER_ONE);
-        assertGameScores(match, LOVE, LOVE);
-        assertGameWon(match, PLAYER_ONE);
+        tennisService.mark(PLAYER_ONE);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertGameWon(tennisService.match(), PLAYER_ONE);
 
     }
 
     @Test
     public void sprint2_us1() throws GameOverException {
         // Start the game & the set : 0 - 0 | 0 - 0
-        assertGameScores(match, LOVE, LOVE);
-        assertSetScores(match, 0, 0);
-        assertGameNotWon(match);
-        assertSetNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertSetScores(tennisService.match(), 0, 0);
+        assertGameNotWon(tennisService.match());
+        assertSetNotWon(tennisService.match());
 
         // Player 1 wins 1 point : 15 - 0 | 0 - 0
-        match.mark(PLAYER_ONE);
-        assertGameScores(match, FIFTEEN, LOVE);
-        assertSetScores(match, 0, 0);
-        assertGameNotWon(match);
-        assertSetNotWon(match);
+        tennisService.mark(PLAYER_ONE);
+        assertGameScores(tennisService.match(), FIFTEEN, LOVE);
+        assertSetScores(tennisService.match(), 0, 0);
+        assertGameNotWon(tennisService.match());
+        assertSetNotWon(tennisService.match());
 
         // Player 1 wins 1 point : 30 - 0 | 0 - 0
-        match.mark(PLAYER_ONE);
-        assertGameScores(match, THIRTY, LOVE);
-        assertSetScores(match, 0, 0);
-        assertGameNotWon(match);
-        assertSetNotWon(match);
+        tennisService.mark(PLAYER_ONE);
+        assertGameScores(tennisService.match(), THIRTY, LOVE);
+        assertSetScores(tennisService.match(), 0, 0);
+        assertGameNotWon(tennisService.match());
+        assertSetNotWon(tennisService.match());
 
         // Player 2 wins 1 point : 30 - 15 | 0 - 0
-        match.mark(PLAYER_TWO);
-        assertGameScores(match, THIRTY, FIFTEEN);
-        assertSetScores(match, 0, 0);
-        assertGameNotWon(match);
-        assertSetNotWon(match);
+        tennisService.mark(PLAYER_TWO);
+        assertGameScores(tennisService.match(), THIRTY, FIFTEEN);
+        assertSetScores(tennisService.match(), 0, 0);
+        assertGameNotWon(tennisService.match());
+        assertSetNotWon(tennisService.match());
 
         // Player 1 wins 1 point : 40 - 15 | 0 - 0
-        match.mark(PLAYER_ONE);
-        assertGameScores(match, FORTY, FIFTEEN);
-        assertSetScores(match, 0, 0);
-        assertGameNotWon(match);
-        assertSetNotWon(match);
+        tennisService.mark(PLAYER_ONE);
+        assertGameScores(tennisService.match(), FORTY, FIFTEEN);
+        assertSetScores(tennisService.match(), 0, 0);
+        assertGameNotWon(tennisService.match());
+        assertSetNotWon(tennisService.match());
 
         // Player 1 wins 1 point : 0 - 0 | 1 - 0
-        match.mark(PLAYER_ONE);
-        assertGameScores(match, LOVE, LOVE);
-        assertSetScores(match, 1, 0);
-        assertGameWon(match, PLAYER_ONE);
-        assertSetNotWon(match);
+        tennisService.mark(PLAYER_ONE);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertSetScores(tennisService.match(), 1, 0);
+        assertGameWon(tennisService.match(), PLAYER_ONE);
+        assertSetNotWon(tennisService.match());
 
         // Player 2 wins 1 game : 0 - 0 | 1 - 1
         winGame(PLAYER_TWO);
-        assertGameScores(match, LOVE, LOVE);
-        assertSetScores(match, 1, 1);
-        assertGameWon(match, PLAYER_TWO);
-        assertSetNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertSetScores(tennisService.match(), 1, 1);
+        assertGameWon(tennisService.match(), PLAYER_TWO);
+        assertSetNotWon(tennisService.match());
 
         // Player 2 wins 1 game : 0 - 0 | 1 - 2
         winGame(PLAYER_TWO);
-        assertGameScores(match, LOVE, LOVE);
-        assertSetScores(match, 1, 2);
-        assertGameWon(match, PLAYER_TWO);
-        assertSetNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertSetScores(tennisService.match(), 1, 2);
+        assertGameWon(tennisService.match(), PLAYER_TWO);
+        assertSetNotWon(tennisService.match());
 
         // Player 2 wins 1 game : 0 - 0 | 1 - 3
         winGame(PLAYER_TWO);
-        assertGameScores(match, LOVE, LOVE);
-        assertSetScores(match, 1, 3);
-        assertGameWon(match, PLAYER_TWO);
-        assertSetNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertSetScores(tennisService.match(), 1, 3);
+        assertGameWon(tennisService.match(), PLAYER_TWO);
+        assertSetNotWon(tennisService.match());
 
         // Player 2 wins 1 game : 0 - 0 | 1 - 4
         winGame(PLAYER_TWO);
-        assertGameScores(match, LOVE, LOVE);
-        assertSetScores(match, 1, 4);
-        assertGameWon(match, PLAYER_TWO);
-        assertSetNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertSetScores(tennisService.match(), 1, 4);
+        assertGameWon(tennisService.match(), PLAYER_TWO);
+        assertSetNotWon(tennisService.match());
 
         // Player 2 wins 1 game : 0 - 0 | 1 - 5
         winGame(PLAYER_TWO);
-        assertGameScores(match, LOVE, LOVE);
-        assertSetScores(match, 1, 5);
-        assertGameWon(match, PLAYER_TWO);
-        assertSetNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertSetScores(tennisService.match(), 1, 5);
+        assertGameWon(tennisService.match(), PLAYER_TWO);
+        assertSetNotWon(tennisService.match());
 
         // Player 2 wins 1 game : 0 - 0 | 1 - 6
         winGame(PLAYER_TWO);
-        assertGameScores(match, LOVE, LOVE);
-        assertSetScores(match, 1, 6);
-        assertGameWon(match, PLAYER_TWO);
-        assertSetWon(match, PLAYER_TWO);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertSetScores(tennisService.match(), 1, 6);
+        assertGameWon(tennisService.match(), PLAYER_TWO);
+        assertSetWon(tennisService.match(), PLAYER_TWO);
     }
 
     @Test
@@ -172,122 +173,122 @@ public class TennisIT {
         winPoints(PLAYER_ONE, 3);
         winPoints(PLAYER_TWO, 1);
 
-        assertGameScores(match, FORTY, FIFTEEN);
-        assertGameNotWon(match);
-        assertSetScores(match, 5, 6);
-        assertSetNotWon(match);
-        assertNoTieBreak(match);
-        assertMatchNotWon(match);
+        assertGameScores(tennisService.match(), FORTY, FIFTEEN);
+        assertGameNotWon(tennisService.match());
+        assertSetScores(tennisService.match(), 5, 6);
+        assertSetNotWon(tennisService.match());
+        assertNoTieBreak(tennisService.match());
+        assertMatchNotWon(tennisService.match());
 
-        match.mark(PLAYER_ONE);
+        tennisService.mark(PLAYER_ONE);
 
-        assertGameScores(match, LOVE, LOVE);
-        assertGameWon(match, PLAYER_ONE);
-        assertSetScores(match, 6, 6);
-        assertSetNotWon(match);
-        assertTieBreak(match);
-        assertTieBreakScores(match, 0, 0);
-        assertTieBreakNotWon(match);
-        assertMatchNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertGameWon(tennisService.match(), PLAYER_ONE);
+        assertSetScores(tennisService.match(), 6, 6);
+        assertSetNotWon(tennisService.match());
+        assertTieBreak(tennisService.match());
+        assertTieBreakScores(tennisService.match(), 0, 0);
+        assertTieBreakNotWon(tennisService.match());
+        assertMatchNotWon(tennisService.match());
 
-        match.mark(PLAYER_ONE);
+        tennisService.mark(PLAYER_ONE);
 
-        assertGameScores(match, LOVE, LOVE);
-        assertGameWon(match, PLAYER_ONE);
-        assertSetScores(match, 6, 6);
-        assertSetNotWon(match);
-        assertTieBreak(match);
-        assertTieBreakScores(match, 1, 0);
-        assertTieBreakNotWon(match);
-        assertMatchNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertGameWon(tennisService.match(), PLAYER_ONE);
+        assertSetScores(tennisService.match(), 6, 6);
+        assertSetNotWon(tennisService.match());
+        assertTieBreak(tennisService.match());
+        assertTieBreakScores(tennisService.match(), 1, 0);
+        assertTieBreakNotWon(tennisService.match());
+        assertMatchNotWon(tennisService.match());
 
-        match.mark(PLAYER_TWO);
+        tennisService.mark(PLAYER_TWO);
 
-        assertGameScores(match, LOVE, LOVE);
-        assertGameWon(match, PLAYER_ONE);
-        assertSetScores(match, 6, 6);
-        assertSetNotWon(match);
-        assertTieBreak(match);
-        assertTieBreakScores(match, 1, 1);
-        assertTieBreakNotWon(match);
-        assertMatchNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertGameWon(tennisService.match(), PLAYER_ONE);
+        assertSetScores(tennisService.match(), 6, 6);
+        assertSetNotWon(tennisService.match());
+        assertTieBreak(tennisService.match());
+        assertTieBreakScores(tennisService.match(), 1, 1);
+        assertTieBreakNotWon(tennisService.match());
+        assertMatchNotWon(tennisService.match());
 
-        match.mark(PLAYER_ONE);
+        tennisService.mark(PLAYER_ONE);
 
-        assertGameScores(match, LOVE, LOVE);
-        assertGameWon(match, PLAYER_ONE);
-        assertSetScores(match, 6, 6);
-        assertSetNotWon(match);
-        assertTieBreak(match);
-        assertTieBreakScores(match, 2, 1);
-        assertTieBreakNotWon(match);
-        assertMatchNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertGameWon(tennisService.match(), PLAYER_ONE);
+        assertSetScores(tennisService.match(), 6, 6);
+        assertSetNotWon(tennisService.match());
+        assertTieBreak(tennisService.match());
+        assertTieBreakScores(tennisService.match(), 2, 1);
+        assertTieBreakNotWon(tennisService.match());
+        assertMatchNotWon(tennisService.match());
 
-        match.mark(PLAYER_ONE);
+        tennisService.mark(PLAYER_ONE);
 
-        assertGameScores(match, LOVE, LOVE);
-        assertGameWon(match, PLAYER_ONE);
-        assertSetScores(match, 6, 6);
-        assertSetNotWon(match);
-        assertTieBreak(match);
-        assertTieBreakScores(match, 3, 1);
-        assertTieBreakNotWon(match);
-        assertMatchNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertGameWon(tennisService.match(), PLAYER_ONE);
+        assertSetScores(tennisService.match(), 6, 6);
+        assertSetNotWon(tennisService.match());
+        assertTieBreak(tennisService.match());
+        assertTieBreakScores(tennisService.match(), 3, 1);
+        assertTieBreakNotWon(tennisService.match());
+        assertMatchNotWon(tennisService.match());
 
-        match.mark(PLAYER_TWO);
+        tennisService.mark(PLAYER_TWO);
 
-        assertGameScores(match, LOVE, LOVE);
-        assertGameWon(match, PLAYER_ONE);
-        assertSetScores(match, 6, 6);
-        assertSetNotWon(match);
-        assertTieBreak(match);
-        assertTieBreakScores(match, 3, 2);
-        assertTieBreakNotWon(match);
-        assertMatchNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertGameWon(tennisService.match(), PLAYER_ONE);
+        assertSetScores(tennisService.match(), 6, 6);
+        assertSetNotWon(tennisService.match());
+        assertTieBreak(tennisService.match());
+        assertTieBreakScores(tennisService.match(), 3, 2);
+        assertTieBreakNotWon(tennisService.match());
+        assertMatchNotWon(tennisService.match());
 
-        match.mark(PLAYER_ONE);
+        tennisService.mark(PLAYER_ONE);
 
-        assertGameScores(match, LOVE, LOVE);
-        assertGameWon(match, PLAYER_ONE);
-        assertSetScores(match, 6, 6);
-        assertSetNotWon(match);
-        assertTieBreak(match);
-        assertTieBreakScores(match, 4, 2);
-        assertTieBreakNotWon(match);
-        assertMatchNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertGameWon(tennisService.match(), PLAYER_ONE);
+        assertSetScores(tennisService.match(), 6, 6);
+        assertSetNotWon(tennisService.match());
+        assertTieBreak(tennisService.match());
+        assertTieBreakScores(tennisService.match(), 4, 2);
+        assertTieBreakNotWon(tennisService.match());
+        assertMatchNotWon(tennisService.match());
 
-        match.mark(PLAYER_ONE);
+        tennisService.mark(PLAYER_ONE);
 
-        assertGameScores(match, LOVE, LOVE);
-        assertGameWon(match, PLAYER_ONE);
-        assertSetScores(match, 6, 6);
-        assertSetNotWon(match);
-        assertTieBreak(match);
-        assertTieBreakScores(match, 5, 2);
-        assertTieBreakNotWon(match);
-        assertMatchNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertGameWon(tennisService.match(), PLAYER_ONE);
+        assertSetScores(tennisService.match(), 6, 6);
+        assertSetNotWon(tennisService.match());
+        assertTieBreak(tennisService.match());
+        assertTieBreakScores(tennisService.match(), 5, 2);
+        assertTieBreakNotWon(tennisService.match());
+        assertMatchNotWon(tennisService.match());
 
-        match.mark(PLAYER_ONE);
+        tennisService.mark(PLAYER_ONE);
 
-        assertGameScores(match, LOVE, LOVE);
-        assertGameWon(match, PLAYER_ONE);
-        assertSetScores(match, 6, 6);
-        assertSetNotWon(match);
-        assertTieBreak(match);
-        assertTieBreakScores(match, 6, 2);
-        assertTieBreakNotWon(match);
-        assertMatchNotWon(match);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertGameWon(tennisService.match(), PLAYER_ONE);
+        assertSetScores(tennisService.match(), 6, 6);
+        assertSetNotWon(tennisService.match());
+        assertTieBreak(tennisService.match());
+        assertTieBreakScores(tennisService.match(), 6, 2);
+        assertTieBreakNotWon(tennisService.match());
+        assertMatchNotWon(tennisService.match());
 
-        match.mark(PLAYER_ONE);
+        tennisService.mark(PLAYER_ONE);
 
-        assertGameScores(match, LOVE, LOVE);
-        assertGameWon(match, PLAYER_ONE);
-        assertSetScores(match, 7, 6);
-        assertSetWon(match, PLAYER_ONE);
-        assertTieBreak(match);
-        assertTieBreakScores(match, 0, 0);
-        assertTieBreakWon(match, PLAYER_ONE);
-        assertMatchWon(match, PLAYER_ONE);
+        assertGameScores(tennisService.match(), LOVE, LOVE);
+        assertGameWon(tennisService.match(), PLAYER_ONE);
+        assertSetScores(tennisService.match(), 7, 6);
+        assertSetWon(tennisService.match(), PLAYER_ONE);
+        assertTieBreak(tennisService.match());
+        assertTieBreakScores(tennisService.match(), 0, 0);
+        assertTieBreakWon(tennisService.match(), PLAYER_ONE);
+        assertMatchWon(tennisService.match(), PLAYER_ONE);
 
     }
 
@@ -303,7 +304,7 @@ public class TennisIT {
 
     private void winPoints(Player player, int numberOfPoints) throws GameOverException {
         for (int i = 0; i < numberOfPoints; i++) {
-            match.mark(player);
+            tennisService.mark(player);
         }
     }
 
