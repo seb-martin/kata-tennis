@@ -1,5 +1,7 @@
 # Kata Tennis
 
+See [Kata Tennis.docx](src/doc/Kata%20Tennis.docx)
+
 ## Requirements
 
 - Java 8
