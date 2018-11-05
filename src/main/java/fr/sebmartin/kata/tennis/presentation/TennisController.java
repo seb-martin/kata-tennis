@@ -1,46 +1,91 @@
 package fr.sebmartin.kata.tennis.presentation;
 
+import fr.sebmartin.kata.tennis.domain.GameOverException;
 import fr.sebmartin.kata.tennis.domain.GameScore;
 import fr.sebmartin.kata.tennis.domain.Player;
 import fr.sebmartin.kata.tennis.domain.TennisMatch;
-import fr.sebmartin.kata.tennis.service.Display;
+import fr.sebmartin.kata.tennis.service.TennisDisplay;
+import fr.sebmartin.kata.tennis.service.TennisService;
 
-import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 import static fr.sebmartin.kata.tennis.domain.Player.PLAYER_ONE;
 import static fr.sebmartin.kata.tennis.domain.Player.PLAYER_TWO;
 
-public class ConsoleDisplay implements Display {
+public class TennisController implements TennisDisplay {
 
-    private PrintWriter printer;
-
-    public ConsoleDisplay() {
-        this(new PrintWriter(System.out, true));
+    private static final Map<String, Player> RESPONSE_PLAYER_MAP = new HashMap<>();
+    static {
+        RESPONSE_PLAYER_MAP.put("1", PLAYER_ONE);
+        RESPONSE_PLAYER_MAP.put("2", PLAYER_TWO);
     }
 
-    public ConsoleDisplay(PrintWriter printer) {
-        this.printer = printer;
+    private final TennisService service;
+    private final PrintWriter printer;
+    private final BufferedReader reader;
+
+    private boolean matchEnded = false;
+
+    public TennisController(TennisService service, Reader input, Writer output) {
+        this.service = Objects.requireNonNull(service);
+        this.reader = new BufferedReader(Objects.requireNonNull(input));
+        this.printer = new PrintWriter(output, true);
+
+        this.service.register(this);
+    }
+
+    public void startMatch() throws IOException, GameOverException {
+
+        while (!matchEnded) {
+
+            String player = askPointWinner();
+
+            mark(player);
+
+        }
+    }
+
+    private String askPointWinner() throws IOException {
+
+        printer.print("Enter point winner (1 or 2): ");
+        printer.flush();
+
+        return reader.readLine().trim();
+
+    }
+
+    private void mark(String player) throws GameOverException {
+
+        if (RESPONSE_PLAYER_MAP.containsKey(player)) {
+            this.service.mark(RESPONSE_PLAYER_MAP.get(player));
+        }
     }
 
     @Override
-    public void playerWonPoint(Player winner) {
-        printer.println(String.format("%s win 1 point", winner));
+    public void playerWonPoint(Player pointWinner, TennisMatch matchState) {
+        displayPointWinner(pointWinner);
+
+        displayGameScores(matchState);
+        displaySetScores(matchState);
+        displayTieBreakScores(matchState);
+
+        displayGameWinner(matchState);
+        displayTieBreakWinner(matchState);
+        displaySetWinner(matchState);
+        displayMatchWinner(matchState);
+
+        displayEmptyLine();
+
+        matchEnded = matchState.winner().isPresent();
     }
 
-    @Override
-    public void matchUpdated(TennisMatch match) {
-        displayGameScores(match);
-        displaySetScores(match);
-        displayTieBreakScores(match);
-
-        displayGameWinner(match);
-        displayTieBreakWinner(match);
-        displaySetWinner(match);
-        displayMatchWinner(match);
-
+    private void displayEmptyLine() {
         printer.println();
+    }
+
+    private void displayPointWinner(Player pointWinner) {
+        printer.println(String.format("%s win 1 point", pointWinner));
     }
 
     private void displayGameScores(TennisMatch match) {

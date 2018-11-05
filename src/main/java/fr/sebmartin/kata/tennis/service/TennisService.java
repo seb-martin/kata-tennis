@@ -4,26 +4,28 @@ import fr.sebmartin.kata.tennis.domain.GameOverException;
 import fr.sebmartin.kata.tennis.domain.Player;
 import fr.sebmartin.kata.tennis.domain.TennisMatch;
 
+import java.util.Objects;
+
 public class TennisService {
 
-    private Display display;
+    private TennisDisplay display;
     private TennisMatch match;
 
-    public TennisService(Display display) {
-        this.display = display;
-        this.match = new TennisMatch();
+    public TennisService(TennisMatch match) {
+        this.match = Objects.requireNonNull(match);
+
+        // Display stub
+        this.display = (w, m) -> { };
+    }
+
+    public void register(TennisDisplay display) {
+        this.display = Objects.requireNonNull(display);
     }
 
     public void mark(Player winner) throws GameOverException {
 
-        this.display.playerWonPoint(winner);
-
         this.match.mark(winner);
 
-        this.display.matchUpdated(match);
-    }
-
-    public TennisMatch match() {
-        return match;
+        this.display.playerWonPoint(winner, match);
     }
 }
